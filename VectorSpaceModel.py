@@ -1,5 +1,6 @@
 import math
-import os 
+import os
+from nltk.stem import PorterStemmer
 
 # Documents to search through
 d = []
@@ -260,7 +261,10 @@ for doc_i in xrange(1, len(list_of_files)):
 		for line in f:
 			for word in line.split():
 				# Apply stemming
+				ps = PorterStemmer()
 				new_word = word.lower()
+				new_word = ps.stem(new_word)
+				print "cuurr new_wrod uWu: " + new_word
 				if new_word not in stop_words and isClean(new_word):
 					num_words += 1
 					print("word: " + str(new_word) + " doc_i = " + str(doc_i)) # Apply stemming!
