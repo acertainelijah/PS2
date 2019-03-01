@@ -4,73 +4,6 @@ from nltk.stem import PorterStemmer
 import xml.etree.ElementTree as ET
 import re
 
-# Documents to search through
-d = []
-#d.append("jack and jill went up the hill")
-d.append("jack jill went up hill")
-d.append("to fetch a pail of water")
-d.append("jack fell down and broke his crown")
-d.append("and jill came tumbling after")
-d.append("up jack got and home did trot")
-d.append("as fast as he could caper")
-d.append("to old dame dob who patch his nob")
-d.append("with vinegar and brown paper")
-
-k_freq = []
-k_freq.append(0)
-
-# Query to search in document
-q = "jack"
-
-# D is the array of all words in all documents
-D_n = 39
-D = []
-D.append("jack")
-D.append("and")
-D.append("jill")
-D.append("went")
-D.append("up")
-D.append("the")
-D.append("hill")
-D.append("to")
-D.append("fetch") 
-D.append("a")	
-D.append("pail")
-D.append("of")	
-D.append("water")	
-D.append("fell")	
-D.append("down")	
-D.append("broke")	
-D.append("his") 	
-D.append("crown")	
-D.append("came")	
-D.append("tumbling")	
-D.append("after")	
-D.append("got")	
-D.append("home")	
-D.append("did")	
-D.append("trot")	
-D.append("as") 	
-D.append("fast")	
-D.append("he")
-D.append("could")	
-D.append("caper")	
-D.append("dame")	
-D.append("dob")	
-D.append("who")	
-D.append("patched")	
-D.append("nob")	
-D.append("with")	
-D.append("vinegar")	
-D.append("brown")	
-D.append("paper")
-
-# q_i
-Q_arr = [0] * 39
-Q_arr[0] = 1
-
-
-
 
 ## TF-IDF
 def term_frequency(term, d):
@@ -86,8 +19,6 @@ def term_frequency(term, d):
 		if (word == term):
 			freq += 1
 
-	## print "\t" + str(freq) + " occurrences of term \'" + term + "\'' in the document."
-
  	total_freq = 0
  	k_freq_set = False
 	for docs in d:
@@ -98,23 +29,15 @@ def term_frequency(term, d):
 				if (k_freq_set == False):
 					k_freq[0] = k_freq[0] + 1
 					k_freq_set = True
-					## print "\tk_freq: " + str(k_freq[0])
 
 	freq = float(freq) / numWords
 	tf = freq
-	#tf = float(freq) / total_freq
-	#print "\ttf = " + str(freq) + " / " + str(total_freq)
 	print "\ttf = " + str(tf)
-	## print "\t" + "total_freq " + str(total_freq)
-	## print  str(tf) + " is the term frequency weight of term \'" + term + "\'' in document" + d[k]
-	## print "\tkfreq before return : " + str(k_freq[0])
-	## return tf
 	IDF = idf(len(d), k_freq[0])
 	print "\tidf = " + str(IDF)
 	w = tf * IDF
 	print "w = tf * idf for term: " + str(term)
 	print str(w) + " = " + str(tf) + " * " + str(IDF)
-
 
 
 def idf(N, n_k):
@@ -157,26 +80,16 @@ def inner_product(q,d):
 def cos_sim(q,d):
 	doc_num = 1
 	for document in d:
-	#for k in xrange(len(d)):	
 		d_arr = [0] * 39
 		product = 0
 		for word in document.split():
 			for i in xrange(len(D)):
-			# print "i: " + str(i) + " D_i: " + D[i]
 				if (word == D[i]):
 					d_arr[i] += 1
-					#print "D: " + D[i] + "\t" + "d_arr[" + str(i) +"]: " + str(d_arr[i])
-				#print "\tword: " + str(word)
-				#print "\tD[" + str(i) + "]: " + str(D[i])
-					
 
 		product = binary_summation(Q_arr, d_arr)
 		Q_sqrt = math.sqrt(binary_summation(Q_arr, Q_arr))
 		D_sqrt = math.sqrt(binary_summation(d_arr, d_arr))
-
-		#print "d" + str(doc_num) + " inner product: " + str(product)
-		#print "\td" + str(doc_num) + " Q_sqrt: " + str(Q_sqrt)
-		#print "\td" + str(doc_num) + " D_sqrt: " + str(D_sqrt)
 
 		end_product = product / (Q_sqrt * D_sqrt)
 
@@ -202,7 +115,6 @@ def docFreq(currr_term, currr_file_name):
 	file = currr_file_name
 	#print file
 	for werd in file.split():
-		#print "curr line word: " + werd
 		new_werd = werd.lower()
 		if currr_term == new_werd:
 			tottt_terms += 1
@@ -222,26 +134,6 @@ def returnPostings(term):
 	return test.word_indx[term].postings
 
 ## Main
-inner_product(q,d)
-print "\n"
-cos_sim(q,d)
-print "\n"
-
-
-## TF-IDF for terms in D_1 in hw
-d1 = d[0]
-for word in d1.split():
-	tf = term_frequency(word, d)
-	k_f = k_freq[0]
-	#print "\tbefore tf k_freq: " + str(k_f)
-	len_d = len(d)
-	#idf = idf(len_d, int(k_f))
-	#IDF = idf(len_d, 10)
-	#w = tf * IDF
-	#print "w = tf * idf"
-	#print str(w) + " = " + str(tf) + " * " + str(IDF)
-
-
 ## create word and posting index
 test = docIndex()
 
@@ -254,15 +146,11 @@ with open('stoplist.txt','r') as f:
 
 # Parse out the ap89_collection
 dict_of_files = {}
-print "about to et  mmmm"
 tree = ET.parse('./data/ap89_collection.xml')
 root = tree.getroot()
 for doc in root.findall(('doc')):
 	docid = doc.find('docno').text
-	#print("docid " + str(docid))
 	text = doc.find('text').text
-	#text = re.sub('[^a-zA-Z]+', '', text)
-	#print("text " + str(text))
 	dict_of_files[docid] = text
 
 print dict_of_files
