@@ -217,6 +217,10 @@ def isClean(word):
 		#print word + " is clean!!!"
 		return True
 
+def returnPostings(term):
+	print term + "::: " + str(test.word_indx[term].postings)
+	return test.word_indx[term].postings
+
 ## Main
 inner_product(q,d)
 print "\n"
@@ -314,3 +318,7 @@ print
 print "test.doc_indx"
 print test.doc_indx
 # TODO Parse the ap89_collection, then query
+
+# Test Return Postings function by term:
+#Reurn Postings with "walk" term:
+returnPostings("walk")
