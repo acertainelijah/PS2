@@ -246,7 +246,7 @@ with open('stoplist.txt','r') as f:
         for word in line.split():
            stop_words.append(word)  
 
-path = "/Users/marchese/Development/cs172/Prog1/data/"
+path = "./data/"
 ignored = {".DS_Store"}
 list_of_files = [x for x in os.listdir(path) if x not in ignored]
 for i in xrange(len(list_of_files)):
