@@ -1,7 +1,7 @@
 import math
 import os
 from nltk.stem import PorterStemmer
-
+import xml.etree.ElementTree as ET
 # Documents to search through
 d = []
 #d.append("jack and jill went up the hill")
@@ -244,54 +244,68 @@ stop_words = []
 with open('stoplist.txt','r') as f:
     for line in f:
         for word in line.split():
-           stop_words.append(word)  
+           stop_words.append(word)
 
-path = "./data/"
-ignored = {".DS_Store"}
-list_of_files = [x for x in os.listdir(path) if x not in ignored]
-for i in xrange(len(list_of_files)):
-	list_of_files[i] = path + list_of_files[i]
-print list_of_files
-#doc_i = 1
-for doc_i in xrange(1, len(list_of_files)):
-	num_words = 0
-	print "Current doc_i ^^^: " + str(doc_i)
-	print "List of files curr ^^^: " + str(list_of_files[doc_i])
-	with open(list_of_files[doc_i], 'r') as f:
-		for line in f:
-			for word in line.split():
-				# Apply stemming
-				ps = PorterStemmer()
-				new_word = word.lower()
-				new_word = ps.stem(new_word)
-				print "cuurr new_wrod uWu: " + new_word
-				if new_word not in stop_words and isClean(new_word):
-					num_words += 1
-					print("word: " + str(new_word) + " doc_i = " + str(doc_i)) # Apply stemming!
-					if new_word in test.word_indx:  # Add to Word Index + Document Index
-						print "word exists"
-						test.word_indx[new_word].num_docs += 1
-						temp_doc_freq = docFreq(new_word, list_of_files[doc_i])
-						test.word_indx[new_word].postings[doc_i] = temp_doc_freq
-					else:
-						print "word (" + new_word + ") does not exist"
-						info = termInfo() # add posting info
-						info.num_docs = 1
-						test.word_indx[new_word] = info
-						test.word_indx[new_word].postings[doc_i] = docFreq(new_word, list_of_files[doc_i])
+# Parse out the ap89_collection
+dict_of_files = {}
+print "about to et  mmmm"
+tree = ET.parse('./data/ap89_collection.xml')
+root = tree.getroot()
+for doc in root.findall(('doc')):
+	docid = doc.find('docno').text
+	#print("docid " + str(docid))
+	text = doc.find('text').text
+	#print("text " + str(text))
+	dict_of_files[docid] = text
 
-	test.doc_indx[doc_i] = num_words  # add to doc index
-
-
-
-print "DONE!!!"
-
-print "test.word_indx:"
-print test.word_indx
-for element in test.word_indx:
-		print element, test.word_indx[element].num_docs, test.word_indx[element].postings
-
-print
-print "test.doc_indx"
-print test.doc_indx
-
+print dict_of_files
+# do indexing
+# path = "./data/"
+# ignored = {".DS_Store"}
+# list_of_files = [x for x in os.listdir(path) if x not in ignored]
+# for i in xrange(len(list_of_files)):
+# 	list_of_files[i] = path + list_of_files[i]
+# print list_of_files
+# #doc_i = 1
+# for doc_i in xrange(1, len(list_of_files)):
+# 	num_words = 0
+# 	print "Current doc_i ^^^: " + str(doc_i)
+# 	print "List of files curr ^^^: " + str(list_of_files[doc_i])
+# 	with open(list_of_files[doc_i], 'r') as f:
+# 		for line in f:
+# 			for word in line.split():
+# 				# Apply stemming
+# 				ps = PorterStemmer()
+# 				new_word = word.lower()
+# 				new_word = ps.stem(new_word)
+# 				print "cuurr new_wrod uWu: " + new_word
+# 				if new_word not in stop_words and isClean(new_word):
+# 					num_words += 1
+# 					print("word: " + str(new_word) + " doc_i = " + str(doc_i)) # Apply stemming!
+# 					if new_word in test.word_indx:  # Add to Word Index + Document Index
+# 						print "word exists"
+# 						test.word_indx[new_word].num_docs += 1
+# 						temp_doc_freq = docFreq(new_word, list_of_files[doc_i])
+# 						test.word_indx[new_word].postings[doc_i] = temp_doc_freq
+# 					else:
+# 						print "word (" + new_word + ") does not exist"
+# 						info = termInfo() # add posting info
+# 						info.num_docs = 1
+# 						test.word_indx[new_word] = info
+# 						test.word_indx[new_word].postings[doc_i] = docFreq(new_word, list_of_files[doc_i])
+#
+# 	test.doc_indx[doc_i] = num_words  # add to doc index
+#
+#
+#
+# print "DONE!!!"
+#
+# print "test.word_indx:"
+# print test.word_indx
+# for element in test.word_indx:
+# 		print element, test.word_indx[element].num_docs, test.word_indx[element].postings
+#
+# print
+# print "test.doc_indx"
+# print test.doc_indx
+# TODO Parse the ap89_collection, then query
